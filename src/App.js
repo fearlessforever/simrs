@@ -1,24 +1,21 @@
 import React, { Component } from 'react';
 //import logo from './logo.svg';
 //import './App.css';
-import wait from './load/wait'
+//import wait from './load/wait'
 
-import LS from './load/localStorage'
+//import LS from './load/localStorage'
 import ROUTE from './load/route'
 
 class App extends Component {
   render() {
-    wait().then(()=>{
+   /*  wait().then(()=>{
       LS.set('aku','ada saja ya wa') 
     }).then(()=>{
       console.log( LS.get('aku') )
-    })
+    }) */
     
-    //console.log( '' ,'apa')
-   // LS.get('aku').then( a => console.log(a ) )
     return (
-      <ROUTE />
-      
+      <ROUTE />      
     );
   }
 }

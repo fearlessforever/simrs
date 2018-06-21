@@ -6,3 +6,5 @@ body{ padding-right:0px!important; } body.boxed-layoutz div[role="dialog"]{ max-
 body.modal-open {overflow-y:scroll!important; } body.modal-open .modal-lg{width:95%;}body.modal-open .modal-sm{width:45%;}
 .dataTables_processing{ background-image:url("../img/select2-spinner.gif")!important; background-repeat: no-repeat!important; background-position:top !important; }
 button.btn-action{line-height:0;}
+ul.messages-list li img{width:45px;height:45px;border-radius:50%}
+.modal-body .input-group:nth-child(n+2){margin-top:5px;}

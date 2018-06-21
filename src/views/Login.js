@@ -35,7 +35,7 @@ class Login extends Component{
     return fetch(window.helmi.api+'umum/getsetting')
     .then(res =>res.json() )
     .then( res =>{
-      if(res.error)throw Error(res.error)
+      if(res.error)throw Error(res.error);
     })
     .catch((res)=>{
       this.setState({
@@ -52,7 +52,14 @@ class Login extends Component{
   }
 
   handleSubmit(){
-    this.setState({inputISdisabled:true,loading:true});
+    this.setState({
+        inputISdisabled:true,
+        loading:true,
+        alertObject:{
+            message:'',className:'hidden',messageBold:'Error'
+        }
+    });
+    
     fetch(window.helmi.api+'login?errorcode=false',{
         headers: {
           'Content-Type':'application/x-www-form-urlencoded',
@@ -65,11 +72,32 @@ class Login extends Component{
         })
     }).then( res => res.json() )
     .then( res => {
-        if(res.error)throw Error(res.error)
+        if(res.errors && typeof res.errors[0] !== 'undefined'){
+            return Promise.reject(res.errors[0]);
+        }else return Promise.resolve(res);
+    })
+    .then( res => {
+        if(res.accesstoken){
+            this.props.dispatch({type:'CHANGE_ACCESSTOKEN',value:res.accesstoken});
+            this.setState({
+                alertObject:{
+                    message:'Logged in ... please wait ...',
+                    className:'alert alert-success',
+                    messageBold:'Success'
+                }
+            });
+            setTimeout(() => {
+                this.props.history.push('dashboard');
+            },2000);
+        }
     })
     .catch( res =>{
        this.setState({
-        alertObject:{message:res.message,className:'alert alert-danger',messageBold:'Error'}
+        alertObject:{
+            message:res.message,
+            className:'alert alert-danger',
+            messageBold:'Error'
+        }
        });
     }).then(()=>{
       this.setState({inputISdisabled:false,loading:false});
@@ -135,10 +163,10 @@ class Login extends Component{
             
             <div className="row">
                 <div className="col-xs-12 col-sm-6">
-                    <a className="btn btn-primary col-xs-12 btn-facebook" rel="noopener noreferrer" target="_blank" href="http://www.facebook.com/fearlessforever"><i className="fa fa-facebook"></i> Facebook</a>
+                    <a className="btn btn-primary col-xs-12 btn-facebook" rel="noopener noreferrer" target="_blank" href="http://www.facebook.com"><i className="fa fa-facebook"></i> Facebook</a>
                 </div>
                 <div className="col-xs-12 col-sm-6">
-                    <a className="btn btn-primary col-xs-12 btn-twitter" rel="noopener noreferrer" target="_blank" href="http://www.facebook.com/fearlessforever"> <i className="fa fa-twitter"></i> Twitter </a>
+                    <a className="btn btn-primary col-xs-12 btn-twitter" rel="noopener noreferrer" target="_blank" href="http://www.facebook.com"> <i className="fa fa-twitter"></i> Twitter </a>
                 </div> 
             </div>
             <div className="row">

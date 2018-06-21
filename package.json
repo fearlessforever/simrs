@@ -4,7 +4,9 @@
   "private": true,
   "dependencies": {
     "history": "^4.7.2",
+    "jquery": "^3.3.1",
     "react": "^16.3.2",
+    "react-bootstrap": "^0.32.1",
     "react-dom": "^16.3.2",
     "react-redux": "^5.0.7",
     "react-router": "^4.2.0",
@@ -19,6 +21,6 @@
     "eject": "react-scripts eject"
   },
   "devDependencies": {
-    "datatables.net": "^1.10.16"
+    "datatables.net": "^1.10.18"
   }
 }

@@ -7,6 +7,11 @@ class Error404 extends Component {
 		};
 	}
 	
+	goBack(e){
+		e.preventDefault();
+		window.history.back();
+	}
+
   	render(){
 		document.body.className = '';
 		document.body.className = 'error-page';
@@ -27,7 +32,7 @@ class Error404 extends Component {
 									{__html: 'Page not found. <br/>If you find this page, let us know.' }
 
 									} />}
-								<p> Go back to <a href="/">Homepage</a>. </p>
+								<p> Go back to <a href="/">Homepage</a>. <a href="" onClick={this.goBack } >Previous Page</a> </p>
 							</div>
 							</div>
 						</div>
