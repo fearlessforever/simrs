@@ -85,7 +85,14 @@ class Dashboard extends Component{
         }else{
             page = 'Belum ada ide tampilan nya :v'; 
         }
-        
+        if( !this.props.loadUserinfo ){
+            return(
+                <div className="loader" >
+                    { this.checkAccessToken() }
+                </div>
+            );
+        }
+
         return(
             <div id={error ? '' : 'theme-wrapper'} >{ 
                 error ? page : 

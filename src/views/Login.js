@@ -36,6 +36,8 @@ class Login extends Component{
     .then(res =>res.json() )
     .then( res =>{
       if(res.error)throw Error(res.error);
+      if(res.data)
+        this.props.dispatch({type:'LOAD_CONFIG',value:res.data});
     })
     .catch((res)=>{
       this.setState({
@@ -113,7 +115,14 @@ class Login extends Component{
   }
 
   render() {
-    //console.log( this.props )
+    console.log( this.props )
+    let { loginPage } = this.props;
+    if(loginPage.background_img){
+        document.body.style.background = 'url('+loginPage.background_img+') fixed no-repeat center' ;
+    }else{
+        document.body.removeAttribute("style");
+    }
+
     return (
       <div id="login-full-wrapperz">
         <div className="container">
@@ -125,7 +134,7 @@ class Login extends Component{
                             <div className="col-xs-12">
             <header id="login-header">
                 <div id="login-logo">
-                    <img alt=""   />
+                    { loginPage.logo_img ? <img alt="" src={loginPage.logo_img}  /> : <img alt="" /> }
                 </div>
             </header>
                             <div id="login-box-inner">
@@ -191,7 +200,10 @@ class Login extends Component{
 }
 
 export default connect( store => {
-  return {loginInfo:store.loginInfo};
+  return {
+      loginInfo:store.loginInfo,
+      loginPage:store.loginPage,
+    };
 })(Login)
 
 /*

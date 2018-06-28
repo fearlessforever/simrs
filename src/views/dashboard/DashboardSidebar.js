@@ -4,9 +4,10 @@ import {connect} from 'react-redux'
 class DashboardSidebar extends Component{
     render(){
         let userDetail = {...this.props.userDetail};
+        let {sidebarList,...props} = this.props;
         userDetail.name = userDetail.name.substr(0,8); 
         let LIST = this.props.sidebarList.map( (val,k) => {
-            return <LiDropdownSidebar key={k} obj={val} />;
+            return <LiDropdownSidebar key={k} obj={val} {...props} />;
         });
         return(
             <div id="nav-col">
@@ -20,7 +21,7 @@ class DashboardSidebar extends Component{
                         </div>
                     </div>
                     <div className={'collapse navbar-collapse navbar-ex1-collapse' + (this.props.navSmallMini ? ' in' : '') } id="sidebar-nav">
-                        <ul className="nav nav-pills nav-stacked"> 
+                        <ul className="nav nav-pills nav-stacked" > 
                             {LIST}
                         </ul>
                     </div>
@@ -35,7 +36,7 @@ export default connect( store => {
     return {
         navSmallMini:store.dashBoard.navSmallMini,
         userDetail:store.dashBoard.user,
-        sidebarList:store.dashBoard.table,
+        sidebarList:store.dashBoard.table, 
     };
 })(DashboardSidebar);
 
@@ -49,15 +50,31 @@ class LiDropdownSidebar extends Component{
         };
     }
     handleClick(e){
-        e.preventDefault();
+        e.preventDefault(); 
 		this.setState({
 			display:!this.state.display
-		});
+        }); 
     }
     handleClickPage(e){
-        //e.preventDefault();
+        if(this.props.navSmallMini)
+        this.props.dispatch({
+            type:'BUTTON_TOGGLE_NAVBARMINI',
+            value:!this.props.navSmallMini
+        });
         //alert('aga')
     }
+    onLeaveFocus(){
+        if(this.state.display)
+        setTimeout( ()=>{
+            this.setState({display:!this.state.display});
+        } , 1 )
+    }
+    /* componentDidMount(){
+        global.document.addEventListener( 'click', this.handleClickOutsideLI.bind(this), false )
+    }
+    componentWillUnmount(){
+        global.document.removeEventListener( 'click', this.handleClickOutsideLI.bind(this), false )
+    } */
 
     render(){
         const {obj,...props} = this.props;
@@ -73,7 +90,7 @@ class LiDropdownSidebar extends Component{
         }
         
         return(
-            <li className={kelasDropdown}>
+            <li className={kelasDropdown}  >
                 <a title={this.props.obj.name} href={LIST ? '' : this.props.obj.link} className={KELAS} onClick={LIST ? this.handleClick.bind(this) : this.handleClickPage.bind(this) }>
                     <i className={ (this.props.obj.iconKlass ? this.props.obj.iconKlass : '' )}></i>
                     <span>{this.props.obj.name}</span> 
@@ -81,7 +98,10 @@ class LiDropdownSidebar extends Component{
                     {this.props.obj.itung ? <span className="label label-info label-circle pull-right">{this.props.obj.itung}</span> : '' }
                     {this.props.obj.pesan ? <span className={'label '+this.props.obj.pesan.klass+' pull-right'} > {this.props.obj.pesan.teks} </span> : ''}
                 </a>
-                { LIST ? <ul className="submenu" style={this.state.display ? {display:'block'} : {} } >{LIST}</ul> : '' }
+                { LIST ? 
+                    <ul className="submenu" style={this.state.display ? {display:'block'} : {} } >
+                        {LIST}
+                    </ul> : '' }
             </li>
         );
     }

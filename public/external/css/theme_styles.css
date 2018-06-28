@@ -8,3 +8,4 @@ body.modal-open {overflow-y:scroll!important; } body.modal-open .modal-lg{width:
 button.btn-action{line-height:0;}
 ul.messages-list li img{width:45px;height:45px;border-radius:50%}
 .modal-body .input-group:nth-child(n+2){margin-top:5px;}
+.loader{ position: fixed; left: 0px; top: 0px; width: 100%; height: 100%; z-index: 9999; background: url('../img/loading.gif') 50% 50% no-repeat rgb(249,249,249); } 

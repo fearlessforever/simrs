@@ -3,9 +3,24 @@ import thunk from 'redux-thunk'
 
 import LS from './localStorage'
 
-const loginInfo = (state={
+const loginPage = ( state = {background_img:'/external/img/e-hospital.jpg',logo_img:'/external/img/logo-black.png'} ,action) => {
+	switch(action.type){
+		case 'LOAD_CONFIG':
+			if(action.value){
+				let {value} = action;
+				value.background_img= value.background_img ? value.background_img : state.background_img;
+				value.logo_img= value.logo_img ? value.logo_img : state.logo_img;
+				state = Object.assign({},state,value);
+			}
+			
+			break;
+		default:break;
+	}
+	return state;
+};
+const loginInfo = ( state ={ 
 	accesstoken:''
-},action)=>{
+},action) => {
 	switch(action.type){
 		case 'CHANGE_ACCESSTOKEN':
 			if(!action.value){
@@ -36,6 +51,7 @@ const dashBoard = (state={
 	},
 	loadUserinfo:false,
 	navSmall:false,
+	collapsedSidebar:false,
 	navSmallMini:false,
 	config:{
 		list:[
@@ -86,6 +102,9 @@ const dashBoard = (state={
 	modalSize:'sm',
 },action)=>{
 	switch(action.type){
+		case 'SIDEBAR_CLICKED':
+		state = {...state ,collapsedSidebar:action.value };
+			break;
 		case 'LOAD_CONFIG':
 			let navSmall = LS.get('navSmall');
 			state = {...state ,navSmall:(navSmall==='false') ?false:true };
@@ -138,7 +157,7 @@ const dashBoard = (state={
 const middleware = applyMiddleware(thunk);
 
 const reducers = combineReducers({
-	loginInfo,dashBoard 
+	loginInfo,dashBoard,loginPage
 });
 const store = window.LS = createStore(reducers,middleware);
 export default store;
