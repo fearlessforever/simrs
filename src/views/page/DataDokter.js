@@ -10,7 +10,7 @@ class DataDokter extends Component{
     removeErrorMessageAlert(){
         this.props.dispatch({type:'PAGE_AJAX_ERROR',value:[]});
     }
-
+    
     render(){
         let {ajaxErrors,...props} = this.props;
         let errorLists = ajaxErrors.map( (val,k) => {
@@ -39,7 +39,7 @@ class DataDokter extends Component{
 							</div>
 						</header>
 						<div id="tempat-total-table" className="main-box-body clearfix"></div>
-						<div className="main-box-body">
+						<div className="main-box-body row">
 							<LoadDataTable {...props} />
 						</div>
                         <div>
@@ -68,15 +68,8 @@ class LoadDataTable extends Component{
        $(document).off('click','[data-tombol]');
        $(document).off('submit','form[data-tombol="form"]');
     }
-    componentDidMount(){
-        window.helmi.that = this;
-        this.totalTabel =0;
-        this.searchQuery='';
-        this.page='master-dokter';
-        this.errors=[];
 
-        let {that} = window.helmi;
-
+    __generateModalForm(){
         this.props.dispatch( dispatch => {
             dispatch({
                 type:'UPDATE_MODAL_BODY',value:{
@@ -87,20 +80,20 @@ class LoadDataTable extends Component{
                                     <label class="input-group-addon">Nama Dokter
                                         <span class="required"> * </span>
                                     </label>
-                                    <input type="text" class="form-control" name="nm_dokter"  />
-                                    <input type="hidden" name="id_satuan"  />
-                                    <input type="hidden" name="mode"  />
+                                    <input disabled type="text" class="form-control" name="nm_dokter"  />
+                                    <input type="hidden" name="kd_dokter"  />
+                                    <input type="hidden" name="mode" value="tambah" />
                                 </div>
                                 <div class="input-group" >
                                     <label class="input-group-addon"> Jenis Kelamin </label>
-                                    <select name="jk" class="form-control" >
+                                    <select disabled name="jk" class="form-control" >
                                         <option value="L">Laki-laki</option>
                                         <option value="P">Perempuan</option>
                                     </select>
                                 </div>
                                 <div class="input-group" >
                                     <label class="input-group-addon"> Golongan Darah </label>
-                                    <select name="gol_drh" class="form-control" >
+                                    <select disabled name="gol_drh" class="form-control" >
                                         <option >A</option>
                                         <option >B</option>
                                         <option >O</option>
@@ -110,41 +103,41 @@ class LoadDataTable extends Component{
                                 </div>
                                 <div class="input-group">
                                     <label class="input-group-addon">Tempat Lahir</label>
-                                    <input type="text" class="form-control" name="tmp_lahir"  /> 
+                                    <input disabled type="text" class="form-control" name="tmp_lahir"  /> 
                                 </div>
                                 <div class="input-group">
                                     <label class="input-group-addon">Tanggal Lahir</label>
-                                    <input type="text" class="form-control" name="tgl_lahir"  /> 
+                                    <input disabled type="text" class="form-control" name="tgl_lahir"  /> 
                                 </div>
                                 <div class="input-group">
                                     <label class="input-group-addon">Agama</label>
-                                    <input type="text" class="form-control" name="agama"  /> 
+                                    <input disabled type="text" class="form-control" name="agama"  /> 
                                 </div>
                                 <div class="form-group">
-                                    <textarea name="almt_tgl" style="margin-top:5px;resize:none;" class="form-control" placeholder="Alamat tempat tinggal"></textarea>
+                                    <textarea disabled name="almt_tgl" style="margin-top:5px;resize:none;" class="form-control" placeholder="Alamat tempat tinggal"></textarea>
                                 </div>
                                 </div>
                                 <div class="col-lg-6">
                                 <div class="form-group">
-                                    <textarea name="alumni" style="resize:none;" class="form-control" placeholder="Alumni"></textarea>
+                                    <textarea disabled name="alumni" style="resize:none;" class="form-control" placeholder="Alumni"></textarea>
                                 </div>
                                 <div class="input-group">
                                     <label class="input-group-addon"> Status Nikah </label>
-                                    <select name="stts_nikah" class="form-control" >
-                                        <option >Single</option>
-                                        <option >Menikah</option>
-                                        <option >Janda</option>
-                                        <option >Dudha</option>
-                                        <option >Jomblo</option>
+                                    <select disabled name="stts_nikah" class="form-control" >
+                                        <option value="SINGLE">Single</option>
+                                        <option value="MENIKAH">Menikah</option>
+                                        <option value="JANDA">Janda</option>
+                                        <option value="DUDHA">Dudha</option>
+                                        <option value="JOMBLO">Jomblo</option>
                                     </select>
                                 </div>
                                 <div class="input-group">
                                     <label class="input-group-addon"> No Ijin Praktek </label>
-                                    <input type="text" class="form-control" name="no_ijn_praktek"  />
+                                    <input disabled type="text" class="form-control" name="no_ijn_praktek"  />
                                 </div>
                                 <div class="input-group">
                                     <label class="input-group-addon"> Nomor Telp </label>
-                                    <input type="text" class="form-control" name="no_telp"  />
+                                    <input disabled type="text" class="form-control" name="no_telp"  />
                                 </div>
                                 </div>
                                 
@@ -152,32 +145,68 @@ class LoadDataTable extends Component{
                            </div>
                             <div style="margin-top:15px;" id="pesan-error"></div>`,
                     header:'<h4>Tambah Dokter</h4>',
-                    footer:'<button class="btn btn-danger pull-left" data-tombol="simpan">Kirim</button>',
+                    footer:'<button disabled class="btn btn-danger pull-left" data-tombol="simpan">Simpan</button>',
                 }
             });
             dispatch({type:'UPDATE_MODAL_SIZE',value:'lg'});
         });
-       
+    }
+
+    componentDidMount(){
+        window.helmi.that = this;
+        this.totalTabel =0;
+        this.searchQuery='';
+        this.page='master-dokter';
+        this.errors=[];
+
+        let {that} = window.helmi;
+        this.__generateModalForm();      
 
        $(document).on('click','[data-tombol]', function(e) {
             e.preventDefault();
                
        		switch($(this).attr('data-tombol')){
                 case 'tambah':
-                    that.props.dispatch({type:'TOGGLE_MODAL',value:true})
+                    that.props.dispatch( dispatch =>{
+                        dispatch({type:'TOGGLE_MODAL',value:true})
+                        $('.modal button,.modal input,.modal select,.modal textarea').removeAttr('disabled')
+                    })
                     break; 
-                       
+                case 'edit':
+                    let data = {accesstoken:that.props.accesstoken},id=$(this).attr('data-id');
+                    that.props.dispatch( dispatch =>{
+                        dispatch({type:'TOGGLE_MODAL',value:true})
+                        $('.modal .modal-title').html('<div><h4>Edit ID : '+id+' </h4></div>')
+                        $.ajax({
+                            url:window.helmi.api + that.page +'/get/'+ id,
+                            data,
+                            dataType:'json'
+                        }).then( res => {
+                            if(res.success){
+                                let k ='',{data} = res;
+                                data.mode = 'edit'
+                                for( k in data ){
+                                    $('form[data-tombol="form"] [name="'+k+'"]').val(data[k])
+                                }
+                                $('.modal button,.modal input,.modal select,.modal textarea').removeAttr('disabled')
+                            }                          
+                           
+                        }).catch( res =>{
+                            console.log(res)
+                        })
+                    })
+                    break;
        			case 'simpan': $('form[data-tombol="form"]').trigger('submit'); break;
        			default:break;
        		}
        });
        $(document).on('submit','form[data-tombol="form"]',function(e){
-       		let data ={
-       			nama_satuan:$('.modal form [name="nama_satuan"]').val() ,
-       			id_satuan:$('.modal form [name="id_satuan"]').val() ,
-       			mode:$('.modal form [name="mode"]').val() ,
-       		};
-       		var {that} = window.helmi ;
+            let formData = $('.modal form').serializeArray(),data=[];
+            formData.forEach( val =>{
+                data[val.name] = val.value
+            })
+            
+            var {that} = window.helmi ;
        		data = {...data,accesstoken:that.props.accesstoken};
        		$.ajax({
        			url: window.helmi.api + that.page +'/insert_update_delete',
@@ -192,9 +221,9 @@ class LoadDataTable extends Component{
              				<div class="alert alert-success"><strong>Success : </strong>${resp.message}</div>\
              			`);
              			setTimeout(()=>{
-             				that.props.dispatch({type:'TOGGLE_MODAL',value:'false'});
-             				that.dataTable.ajax.reload(null, false);
-             				//that.setDataTable();
+                            that.props.dispatch({type:'TOGGLE_MODAL',value:'false'});
+                            that.totalTabel = 0;
+             				that.dataTable.ajax.reload(null, false);             				
              			},1000);
        				}
        			},
@@ -223,7 +252,7 @@ class LoadDataTable extends Component{
             serverSide: true,
             searching: false,
             ajax: {
-                url: window.helmi.api + that.page +'?errorcode=false' ,
+                url: window.helmi.api + that.page +'?errorcode=false',
                 data: d => {
                     d.accesstoken = that.props.accesstoken;
                     d.totalrow = that.totalTabel;
@@ -234,18 +263,12 @@ class LoadDataTable extends Component{
                 },
                 type: "POST", 
                 error: xhr => {
-                    let errorMsg = {error:'Error Load Data',code:503}
-                    if(typeof xhr.responseJSON !== 'undefined'){
-                        if(xhr.responseJSON.error)errorMsg.error = xhr.responseJSON.error;
-                        if(typeof xhr.responseJSON.accesstoken !== 'undefined'){
-                            that.props.dispatch({
-                                type:'CHANGE_ACCESSTOKEN',value:xhr.responseJSON.accesstoken
-                            });
+                    if(typeof xhr.responseJSON !== 'undefined' && xhr.responseJSON.errors){
+                        let {errors} = xhr.responseJSON;
+                        if(errors){
+                            that.props.dispatch({type:'PAGE_AJAX_ERROR',value:errors}) ; 
                         }
                     }
-                    that.props.dispatch({
-                        type:'PAGE_ERROR',value:errorMsg
-                    });
                 },
                 dataSrc: json => {
                     if(!json.data)json.data=[];
@@ -254,13 +277,30 @@ class LoadDataTable extends Component{
                     if(json.errors){
                         that.props.dispatch({type:'PAGE_AJAX_ERROR',value:json.errors}) ; 
                     }
-                    return json;
+                    that.totalTabel = json.recordsTotal;
+                    
+                    let data =[] ,no=0,kk='';
+                    if(json.data.length > 0){
+                        json.data.forEach( (val,k) => {
+                            no=0; data[k]=[];
+                            for( kk in val ){
+                                data[k][no]=val[kk].replace(/</g,'&lt;').replace(/>/g,'&gt;');
+                                no++;
+                            }
+                            data[k][no]=`
+                                <button class="btn btn-action btn-danger" data-id="${data[k][0]}" data-tombol="hapus"><i class="fa fa-times"></i></button>
+                                <button class="btn btn-action btn-info" data-id="${data[k][0]}" data-tombol="edit"><i class="fa fa-gear"></i></button>
+                            `;                            
+                        })
+                        //json.data =data;
+                    }
+                    return data;
                 }
             },
             columns:[
-                {name: "id_dokter",searchable: false,  className: "text-center", width: "5%"},
+                {name: "kd_dokter",searchable: false,  class: "text-center", width: "5%"},
                 {name: "nm_dokter",orderable:false},
-                {name: "action",orderable: false,searchable: false, className: "text-center", width: "15%"}
+                {name: "action",orderable: false,searchable: false, class: "text-center", width: "15%"}
             ],
             bStateSave:true,
             //pagingType:'bootstrap_extended'
@@ -274,7 +314,7 @@ class LoadDataTable extends Component{
     
     render(){
         return(
-            <div id="tempat-table-crud">
+            <div id="tempat-table-crud" className="table-responsive">
                 <table className="table table-striped table-bordered table-hover table-checkable order-column" >
                     <thead>
                         <tr>

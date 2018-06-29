@@ -115,7 +115,7 @@ class Login extends Component{
   }
 
   render() {
-    console.log( this.props )
+    //console.log( this.props )
     let { loginPage } = this.props;
     if(loginPage.background_img){
         document.body.style.background = 'url('+loginPage.background_img+') fixed no-repeat center' ;

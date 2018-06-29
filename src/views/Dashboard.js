@@ -92,7 +92,7 @@ class Dashboard extends Component{
                 </div>
             );
         }
-
+        document.body.removeAttribute("style");
         return(
             <div id={error ? '' : 'theme-wrapper'} >{ 
                 error ? page : 

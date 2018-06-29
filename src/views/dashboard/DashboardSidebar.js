@@ -88,10 +88,11 @@ class LiDropdownSidebar extends Component{
 		if(this.state.display){
 			kelasDropdown += 'open';
         }
+        let link = '#/dashboard/'+this.props.obj.link ;
         
         return(
             <li className={kelasDropdown}  >
-                <a title={this.props.obj.name} href={LIST ? '' : this.props.obj.link} className={KELAS} onClick={LIST ? this.handleClick.bind(this) : this.handleClickPage.bind(this) }>
+                <a title={this.props.obj.name} href={LIST ? '' : link } className={KELAS} onClick={LIST ? this.handleClick.bind(this) : this.handleClickPage.bind(this) }>
                     <i className={ (this.props.obj.iconKlass ? this.props.obj.iconKlass : '' )}></i>
                     <span>{this.props.obj.name}</span> 
                     {LIST ? <i className="fa fa-chevron-circle-right drop-icon"></i> : '' }
