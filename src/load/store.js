@@ -73,9 +73,9 @@ const dashBoard = (state={
 		]
 	},
 	messageList:[
-		{name:'George Clooney',pic:'/external/img/no_image.jpg',teks:"Look, just because I don't be givin' no man a foot massage don't make it right for Marsellus to throw...",waktu:'13 min.'}
-		,{name:'Emma Watson',pic:'/external/img/no_image.jpg',teks:"Look, just because I don't be givin' no man a foot massage don't make it right for Marsellus to throw...",waktu:'13 min.'}
-		,{name:'Robert Downey Jr.',pic:'/external/img/no_image.jpg',teks:"Look, just because I don't be givin' no man a foot massage don't make it right for Marsellus to throw...",waktu:'13 min.'}
+		{name:'George Clooney',pic:'/external/img/no_image.jpg',teks:"Look, Don't make it right for Marsellus to throw...",waktu:'13 min.'}
+		,{name:'Emma Watson',pic:'/external/img/no_image.jpg',teks:"Look, Don't make it right for Marsellus to throw...",waktu:'13 min.'}
+		,{name:'Robert Downey Jr.',pic:'/external/img/no_image.jpg',teks:"Look, Don't make it right for Marsellus to throw...",waktu:'13 min.'}
 	],
 	menuList:[
 		{link:'#/dashboard/profiles',teks:'Profile',iconKlass:'fa fa-user'}

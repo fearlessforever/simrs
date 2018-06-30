@@ -164,23 +164,25 @@ class LoadDataTable extends Component{
 
        $(document).on('click','[data-tombol]', function(e) {
             e.preventDefault();
-               
+            let data,id = ( typeof $(this).attr('data-id') !== 'undefined' ) ? $(this).attr('data-id') : '' ;
        		switch($(this).attr('data-tombol')){
-                case 'tambah':
+                case 'tambah': 
                     that.props.dispatch( dispatch =>{
+                        dispatch({type:'UPDATE_MODAL_SIZE',value:'lg'});
                         dispatch({type:'TOGGLE_MODAL',value:true})
                         $('.modal button,.modal input,.modal select,.modal textarea').removeAttr('disabled')
                     })
                     break; 
-                case 'edit':
-                    let data = {accesstoken:that.props.accesstoken},id=$(this).attr('data-id');
+                case 'edit': 
+                    data = {accesstoken:that.props.accesstoken}; 
                     that.props.dispatch( dispatch =>{
+                        dispatch({type:'UPDATE_MODAL_SIZE',value:'lg'});
                         dispatch({type:'TOGGLE_MODAL',value:true})
                         $('.modal .modal-title').html('<div><h4>Edit ID : '+id+' </h4></div>')
                         $.ajax({
                             url:window.helmi.api + that.page +'/get/'+ id,
                             data,
-                            dataType:'json'
+                            dataType:'json', 
                         }).then( res => {
                             if(res.success){
                                 let k ='',{data} = res;
@@ -192,8 +194,35 @@ class LoadDataTable extends Component{
                             }                          
                            
                         }).catch( res =>{
-                            console.log(res)
+                            if(res.responseJSON.errors){
+                                let {errors} = res.responseJSON;
+                                errors.forEach( val =>{
+                                    $('.modal #pesan-error').html(`
+                                        <div class="alert alert-danger"><strong>Error : </strong>${val.message ? val.message : ''}</div>
+                                    `);
+                                })
+                            }
                         })
+                    })
+                    break;
+                case 'hapus': 
+                    that.props.dispatch( dispatch =>{
+                        dispatch({type:'UPDATE_MODAL_SIZE',value:'sm'});
+                        dispatch({type:'TOGGLE_MODAL',value:true});
+                        $('.modal .modal-title').html('<div><h4>Delete ID : '+id+' </h4></div>')
+                        $('.modal .modal-body').html(`
+                            <div class="row" style="text-align:center">
+                                <form data-tombol="form">
+                                    <input type="hidden" name="kd_dokter" />
+                                    <input type="hidden" name="mode" value="delete" />
+                                </form>
+                                <h4>Continue ?</h4>
+                                <button class="btn btn-warning" data-tombol="simpan"> DELETE </button>
+                            </div>
+                            <p></p>
+                            <div class="row" id="pesan-error"></div>
+                        `)
+                        $('.modal .modal-body input[name="kd_dokter"]').val(id)
                     })
                     break;
        			case 'simpan': $('form[data-tombol="form"]').trigger('submit'); break;
@@ -226,22 +255,21 @@ class LoadDataTable extends Component{
              				that.dataTable.ajax.reload(null, false);             				
              			},1000);
        				}
-       			},
-       			error:xhr => {
-       				if(typeof xhr.responseJSON !== 'undefined'){
-                        if(xhr.responseJSON.errors)xhr.responseJSON.error=xhr.responseJSON.errors[0];
-             			if(xhr.responseJSON.error){
-             				$('.modal #pesan-error').html(`
-             					<div class="alert alert-danger"><strong>Error : </strong>${xhr.responseJSON.error.message}</div>
-             				`);
-             			}
-             		}
        			},beforeSend:function(){
        				$('.modal [data-tombol]').attr('disabled','disabled');
        			},complete:function(){
        				$('.modal [data-tombol]').removeAttr('disabled');
        			}
-       		});
+       		}).catch( res =>{
+                if(res.responseJSON.errors){
+                    let {errors} = res.responseJSON;
+                    errors.forEach( val =>{
+                        $('.modal #pesan-error').html(`
+                            <div class="alert alert-danger"><strong>Error : </strong>${val.message ? val.message : ''}</div>
+                        `);
+                    })
+                }
+            });
        		e.preventDefault();
        		
        });
