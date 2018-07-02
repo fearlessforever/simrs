@@ -1,21 +1,24 @@
 import React,{Component} from 'react'
 import {connect} from 'react-redux'
+//import ReactDOMServer from 'react-dom/server';
 
 import MessageAlert from '../part/MessageAlert'
-
 import $ from 'jquery'
+
 $.DataTable = require('datatables.net')
+$.autocomplete = require('jquery-ui/ui/widgets/autocomplete')
+
 
 class DataDokter extends Component{
     removeErrorMessageAlert(){
         this.props.dispatch({type:'PAGE_AJAX_ERROR',value:[]});
     }
-    
+
     render(){
         let {ajaxErrors,...props} = this.props;
         let errorLists = ajaxErrors.map( (val,k) => {
             val.className= 'alert alert-warning';
-            return <MessageAlert option={val} onClick={this.removeErrorMessageAlert.bind(this)} />
+            return <MessageAlert key={k} option={val} onClick={this.removeErrorMessageAlert.bind(this)} />
         });
         return(
             <div className="col-lg-12">
@@ -29,7 +32,7 @@ class DataDokter extends Component{
 					</div>
 				</div>
 				<div className="row">
-					<div className="col-lg-12 main-box"> 
+					<div className="col-lg-12 main-box">
 						<header className="main-box-header clearfix">
 							<h2 className="pull-left">Dokter </h2>
 							<div className="filter-block pull-right">
@@ -65,6 +68,7 @@ class LoadDataTable extends Component{
     componentWillUnmount(){
        //$('#tempat-table-crud table').DataTable().destroy(true);
        if(this.dataTable)this.dataTable.destroy(true);
+       $('input[name="autocomplete"]').autocomplete( "destroy" );
        $(document).off('click','[data-tombol]');
        $(document).off('submit','form[data-tombol="form"]');
     }
@@ -103,15 +107,15 @@ class LoadDataTable extends Component{
                                 </div>
                                 <div class="input-group">
                                     <label class="input-group-addon">Tempat Lahir</label>
-                                    <input disabled type="text" class="form-control" name="tmp_lahir"  /> 
+                                    <input disabled type="text" class="form-control" name="tmp_lahir"  />
                                 </div>
                                 <div class="input-group">
                                     <label class="input-group-addon">Tanggal Lahir</label>
-                                    <input disabled type="text" class="form-control" name="tgl_lahir"  /> 
+                                    <input disabled type="text" class="form-control" name="tgl_lahir"  />
                                 </div>
                                 <div class="input-group">
                                     <label class="input-group-addon">Agama</label>
-                                    <input disabled type="text" class="form-control" name="agama"  /> 
+                                    <input disabled type="text" class="form-control" name="agama"  />
                                 </div>
                                 <div class="form-group">
                                     <textarea disabled name="almt_tgl" style="margin-top:5px;resize:none;" class="form-control" placeholder="Alamat tempat tinggal"></textarea>
@@ -139,8 +143,13 @@ class LoadDataTable extends Component{
                                     <label class="input-group-addon"> Nomor Telp </label>
                                     <input disabled type="text" class="form-control" name="no_telp"  />
                                 </div>
+                                <input type="hidden" name="kd_sps" value="1" />
+                                <div class="input-group">
+                                    <label class="input-group-addon"> Spesialis </label>
+                                    <input class="form-control" name="autocomplete" placeholder="Cari spesialis dokter" />
                                 </div>
-                                
+                                </div>
+                                <div class="ui-front"></div>
                             </form>
                            </div>
                             <div style="margin-top:15px;" id="pesan-error"></div>`,
@@ -151,7 +160,45 @@ class LoadDataTable extends Component{
             dispatch({type:'UPDATE_MODAL_SIZE',value:'lg'});
         });
     }
-
+    __initiateAutoComplete(){
+        //alert( typeof $.combobox )
+        $('.modal input[name="autocomplete"]').autocomplete({
+            appendTo: ".ui-front",
+            source: (req , add)=>{
+                let data = {accesstoken:this.props.accesstoken , search :req.term }
+                $.ajax({
+                    url:window.helmi.api + 'master-spesialis/get/',
+                    dataType:'json',
+                    data,
+                    beforeSend: req =>{
+                        $('.modal input[name="autocomplete"]').attr('disabled','disabled')
+                    },
+                    complete: res =>{
+                        $('.modal input[name="autocomplete"]').removeAttr('disabled')
+                    }
+                }).then(res =>{
+                    if(res.data){
+                        let {data} = res ;
+                        data.forEach( val =>{
+                            val.label = val.nm_sps ;
+                        })
+                        add(data)
+                    }
+                }).catch(res =>{
+                    if(res.responseJSON.errors){
+                        let {errors} = res.responseJSON,val={};
+                        errors.forEach( valz => val=valz )
+                        $('.modal #pesan-error').html(`
+                        <div class="alert alert-danger"><strong>Error : </strong>${val.message ? val.message : ''}</div>
+                    `);
+                    }
+                })
+            },
+            select: ( e , item)=>{
+                $('input[name="kd_sps"]').val(item.item.kd_sps)
+            }
+        });
+    }
     componentDidMount(){
         window.helmi.that = this;
         this.totalTabel =0;
@@ -160,21 +207,24 @@ class LoadDataTable extends Component{
         this.errors=[];
 
         let {that} = window.helmi;
-        this.__generateModalForm();      
+        this.__generateModalForm();
 
        $(document).on('click','[data-tombol]', function(e) {
             e.preventDefault();
             let data,id = ( typeof $(this).attr('data-id') !== 'undefined' ) ? $(this).attr('data-id') : '' ;
        		switch($(this).attr('data-tombol')){
-                case 'tambah': 
+                case 'tambah':
+                    data = {accesstoken:that.props.accesstoken};
                     that.props.dispatch( dispatch =>{
                         dispatch({type:'UPDATE_MODAL_SIZE',value:'lg'});
                         dispatch({type:'TOGGLE_MODAL',value:true})
                         $('.modal button,.modal input,.modal select,.modal textarea').removeAttr('disabled')
+                        that.__initiateAutoComplete();
+
                     })
-                    break; 
-                case 'edit': 
-                    data = {accesstoken:that.props.accesstoken}; 
+                    break;
+                case 'edit':
+                    data = {accesstoken:that.props.accesstoken};
                     that.props.dispatch( dispatch =>{
                         dispatch({type:'UPDATE_MODAL_SIZE',value:'lg'});
                         dispatch({type:'TOGGLE_MODAL',value:true})
@@ -182,7 +232,7 @@ class LoadDataTable extends Component{
                         $.ajax({
                             url:window.helmi.api + that.page +'/get/'+ id,
                             data,
-                            dataType:'json', 
+                            dataType:'json',
                         }).then( res => {
                             if(res.success){
                                 let k ='',{data} = res;
@@ -191,8 +241,9 @@ class LoadDataTable extends Component{
                                     $('form[data-tombol="form"] [name="'+k+'"]').val(data[k])
                                 }
                                 $('.modal button,.modal input,.modal select,.modal textarea').removeAttr('disabled')
-                            }                          
-                           
+                                that.__initiateAutoComplete();
+                            }
+
                         }).catch( res =>{
                             if(res.responseJSON.errors){
                                 let {errors} = res.responseJSON;
@@ -205,7 +256,7 @@ class LoadDataTable extends Component{
                         })
                     })
                     break;
-                case 'hapus': 
+                case 'hapus':
                     that.props.dispatch( dispatch =>{
                         dispatch({type:'UPDATE_MODAL_SIZE',value:'sm'});
                         dispatch({type:'TOGGLE_MODAL',value:true});
@@ -234,7 +285,7 @@ class LoadDataTable extends Component{
             formData.forEach( val =>{
                 data[val.name] = val.value
             })
-            
+
             var {that} = window.helmi ;
        		data = {...data,accesstoken:that.props.accesstoken};
        		$.ajax({
@@ -252,7 +303,7 @@ class LoadDataTable extends Component{
              			setTimeout(()=>{
                             that.props.dispatch({type:'TOGGLE_MODAL',value:'false'});
                             that.totalTabel = 0;
-             				that.dataTable.ajax.reload(null, false);             				
+             				that.dataTable.ajax.reload(null, false);
              			},1000);
        				}
        			},beforeSend:function(){
@@ -262,18 +313,18 @@ class LoadDataTable extends Component{
        			}
        		}).catch( res =>{
                 if(res.responseJSON.errors){
-                    let {errors} = res.responseJSON;
+                    let {errors} = res.responseJSON,valz='';
+                    //console.log( ReactDOMServer.renderToStaticMarkup(html) );
                     errors.forEach( val =>{
-                        $('.modal #pesan-error').html(`
-                            <div class="alert alert-danger"><strong>Error : </strong>${val.message ? val.message : ''}</div>
-                        `);
+                        valz += `<div class="alert alert-danger"><strong>Error : </strong>${val.message ? val.message : ''}</div>`;
                     })
+                    $('.modal #pesan-error').html( valz );
                 }
             });
        		e.preventDefault();
-       		
+
        });
-       
+
         this.dataTable = $('#tempat-table-crud table').DataTable({
             destroy: true,
             processing: true,
@@ -289,12 +340,12 @@ class LoadDataTable extends Component{
                 beforeSend: req => {
                     $('#tempat-table-crud table tbody').html('<tr><td colSpan="3"> <h3>Loading ...</h3> </td></tr>');
                 },
-                type: "POST", 
+                type: "POST",
                 error: xhr => {
                     if(typeof xhr.responseJSON !== 'undefined' && xhr.responseJSON.errors){
                         let {errors} = xhr.responseJSON;
                         if(errors){
-                            that.props.dispatch({type:'PAGE_AJAX_ERROR',value:errors}) ; 
+                            that.props.dispatch({type:'PAGE_AJAX_ERROR',value:errors}) ;
                         }
                     }
                 },
@@ -303,10 +354,10 @@ class LoadDataTable extends Component{
                     if(!json.recordsTotal)json.recordsTotal=0;
                     if(!json.recordsFiltered)json.recordsFiltered=0;
                     if(json.errors){
-                        that.props.dispatch({type:'PAGE_AJAX_ERROR',value:json.errors}) ; 
+                        that.props.dispatch({type:'PAGE_AJAX_ERROR',value:json.errors}) ;
                     }
                     that.totalTabel = json.recordsTotal;
-                    
+
                     let data =[] ,no=0,kk='';
                     if(json.data.length > 0){
                         json.data.forEach( (val,k) => {
@@ -318,7 +369,7 @@ class LoadDataTable extends Component{
                             data[k][no]=`
                                 <button class="btn btn-action btn-danger" data-id="${data[k][0]}" data-tombol="hapus"><i class="fa fa-times"></i></button>
                                 <button class="btn btn-action btn-info" data-id="${data[k][0]}" data-tombol="edit"><i class="fa fa-gear"></i></button>
-                            `;                            
+                            `;
                         })
                         //json.data =data;
                     }
@@ -332,14 +383,14 @@ class LoadDataTable extends Component{
             ],
             bStateSave:true,
             //pagingType:'bootstrap_extended'
-        }); 
-       
+        });
+
     }
 
     shouldComponentUpdate() {
         return false;
     }
-    
+
     render(){
         return(
             <div id="tempat-table-crud" className="table-responsive">
@@ -355,7 +406,7 @@ class LoadDataTable extends Component{
                         <tr><td colSpan="3"> <h3>Loading ...</h3> </td></tr>
                     </tbody>
                 </table>
-            
+
             </div>
         );
     }

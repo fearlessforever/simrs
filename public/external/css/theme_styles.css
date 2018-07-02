@@ -8,4 +8,17 @@ body.modal-open {overflow-y:scroll!important; } body.modal-open .modal-lg{width:
 button.btn-action{line-height:0;}
 ul.messages-list li img{width:45px;height:45px;border-radius:50%}
 .modal-body .input-group:nth-child(n+2){margin-top:5px;}
-.loader{ position: fixed; left: 0px; top: 0px; width: 100%; height: 100%; z-index: 9999; background: url('../img/loading.gif') 50% 50% no-repeat rgb(249,249,249); } 
+.loader{ position: fixed; left: 0px; top: 0px; width: 100%; height: 100%; z-index: 9999; background: url('../img/loading.gif') 50% 50% no-repeat rgb(249,249,249); }
+body.modal-open .ui-autocomplete{
+	z-index:1040;
+}
+@media screen and (max-width: 767px){
+	div.modal-dialog{
+		margin:30px auto;
+	}
+}
+@media screen and (max-width: 600px){
+	body.modal-open .modal-sm{
+		width:85%;
+	}
+}

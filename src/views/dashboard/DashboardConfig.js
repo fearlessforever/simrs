@@ -31,7 +31,7 @@ class DashboardConfig extends Component{
         const LIST = this.props.dashConfig.list.map( (val,k) => <LiConfigList key={k} obj={val} /> )
         const LIST2 = this.props.dashConfig.color.map( (val,k) => <LiConfigColor key={k} obj={val} /> )
         return (
-            <div tabIndex="0" onBlur={this.toggleOnBlur.bind(this)} id="config-tool" className={this.state.show?'opened':'closed'}>
+            <div tabIndex="-1" onBlur={this.toggleOnBlur.bind(this)} id="config-tool" className={this.state.show?'opened':'closed'}>
                 <a id="config-tool-cog" onClick={this.toggleShowConfig.bind(this)} > <i className="fa fa-cog"></i> </a>
                 <div id="config-tool-options">
                     <h4>Layout Options</h4>

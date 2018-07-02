@@ -108,7 +108,7 @@ class DashboardHeaderNavBar extends Component{
                     </form>
                     </div>
                 </li>
-                <li onBlur={this.handleNotifOnBlur.bind(this)} tabIndex="0" className={ 'dropdown hidden-xs ' + (this.state.notif ? 'open' : '' )} >
+                <li onBlur={this.handleNotifOnBlur.bind(this)} tabIndex="-1" className={ 'dropdown hidden-xs ' + (this.state.notif ? 'open' : '' )} >
                     <a role="button" onClick={this.handleNotifOnClick.bind(this)} className="btn dropdown-toggle" data-toggle="dropdown"> <i className="fa fa-warning"></i> <span className="count">{cntList}</span> </a>
                     <ul className="dropdown-menu notifications-list">
                         <li className="pointer">
